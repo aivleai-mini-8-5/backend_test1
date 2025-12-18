@@ -4,11 +4,13 @@ phases:
   install:
     runtime-versions:
       java: corretto17
+
   build:
     commands:
       - echo Build Starting...
       - chmod +x ./gradlew
-      - ./gradlew build
+      - ./gradlew clean build -x test
+
   post_build:
     commands:
       - echo Build completed on `date`
@@ -16,4 +18,6 @@ phases:
 artifacts:
   files:
     - build/libs/*.jar
+    - appspec.yml
+    - scripts/**/*
   discard-paths: yes
