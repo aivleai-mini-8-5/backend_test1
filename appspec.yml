@@ -2,25 +2,21 @@ version: 0.0
 os: linux
 
 files:
-  - source: /
-    destination: /home/ec2-user/backend
+  # buildspec에서 경로를 다 버렸으므로(discard-paths), jar파일은 바로 루트에 있습니다.
+  - source:  /
+    destination: /home/ec2-user/app/
     overwrite: yes
 
-# 파일 소유권을 ec2-user로 변경
 permissions:
-  - object: /
+  - object: /home/ec2-user/app/
     pattern: "**"
     owner: ec2-user
     group: ec2-user
 
 hooks:
-  # 앱을 끄는 건 배포의 가장 첫 단계
-  ApplicationStop:
-    - location: scripts/stop_server.sh
-      timeout: 60
-      runas: ec2-user
+  # ❌ ApplicationStop 제거 (새 서버라 끌 게 없음)
 
-  # 앱을 켜는 건 배포의 가장 마지막 단계
+  # ✅ 앱 실행만 남김
   ApplicationStart:
     - location: scripts/start_server.sh
       timeout: 60
