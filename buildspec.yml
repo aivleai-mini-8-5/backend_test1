@@ -3,12 +3,13 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      java: corretto17
+      java: corretto17			# Java 17사용 (프로젝트 버전에 맞게 수정)
+
   build:
     commands:
       - echo Build Starting...
       - chmod +x ./gradlew
-      - ./gradlew clean build -x test
+      - ./gradlew clean build -x test # 테스트 건너뛰고 빌드 (실습용)
 
   post_build:
     commands:
@@ -16,7 +17,7 @@ phases:
 
 artifacts:
   files:
-    - build/libs/*.jar   # 빌드된 jar
+    - build/libs/*.jar
     - appspec.yml
-    - scripts/** # 스크립트 폴더 전체
-  discard-paths: yes     # 중요: 파일 경로를 없애고 파일만 쏙 뽑아서 저장
+    - scripts/**
+  discard-paths: no

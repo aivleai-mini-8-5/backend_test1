@@ -1,36 +1,15 @@
 #!/bin/bash
 
-# 1. 자바 설치 확인 및 대기 (최대 5분 대기)
-echo "Java 설치 확인 중..."
-for i in {1..60}
-do
-    if command -v java &> /dev/null
-    then
-        echo "Java 설치 완료 확인됨."
-        break
-    fi
-    echo "Java가 아직 설치되지 않았습니다. 5초 대기... ($i/60)"
-    sleep 5
-done
-
-# 2. 배포 경로 설정
-PROJECT_ROOT="/home/ec2-user/app"
-cd $PROJECT_ROOT
-
-# 3. 로그 파일
-LOG_FILE="$PROJECT_ROOT/application.log"
-
-# 4. JAR 파일 찾기
-JAR_FILE=$(ls *.jar | grep -v "plain" | head -n 1)
-
-if [ -z "$JAR_FILE" ]; then
-    echo "ERROR: 실행할 JAR 파일을 찾을 수 없습니다."
-    exit 1
-fi
+# 배포될 경로 (나중에 EC2의 해당 경로를 사용)
+PROJECT_ROOT="/home/ec2-user/backend"
+# 'plain'이 포함된 파일은 제외
+JAR_FILE=$(ls $PROJECT_ROOT/build/libs/*.jar | grep -v "plain" | head -n 1)
+## JAR_FILE=$(ls $PROJECT_ROOT/build/libs/*.jar | head -n 1)
 
 echo "애플리케이션 실행: $JAR_FILE"
 
-# 5. 실행 (nohup)
-nohup java -jar $JAR_FILE > $LOG_FILE 2>&1 &
+# 로그 파일 위치 지정
+LOG_FILE="$PROJECT_ROOT/application.log"
 
-echo "배포 완료."
+# 기존 로그 백업 없이 덮어쓰거나 이어쓰기 (여기선 이어쓰기 >> 사용)
+nohup java -jar "$JAR_FILE" >> $LOG_FILE 2>&1 &
